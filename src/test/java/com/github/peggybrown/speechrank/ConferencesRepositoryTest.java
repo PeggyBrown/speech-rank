@@ -24,29 +24,32 @@ import static org.mockito.Mockito.verify;
 
 class ConferencesRepositoryTest {
 
+    ConferencesRepository mockedConfRepo;
     ConferencesRepository confRepo;
 
     @BeforeEach
     void setUp() {
-        confRepo = Mockito.mock(ConferencesRepository.class);
+        mockedConfRepo = Mockito.mock(ConferencesRepository.class);
+        confRepo = new ConferencesRepository("xyz");
     }
     @Test
     void shouldAddRateToSpecificPresentation() {
-        //when
-        doNothing().when(confRepo).add(isA(Rate.class));
+        //given
         Rate rate = setRate(5);
-        confRepo.add(rate);
+        //when
+        doNothing().when(mockedConfRepo).add(isA(Rate.class));
+        mockedConfRepo.add(rate);
         //then
-        verify(confRepo, times(1)).add(rate);
+        verify(mockedConfRepo, times(1)).add(rate);
     }
 
     @Test
     void shouldAddCommentToSpecificPresentation() {
         //when
-        doNothing().when(confRepo).add(isA(Comment.class));
-        confRepo.add(new Comment());
+        doNothing().when(mockedConfRepo).add(isA(Comment.class));
+        mockedConfRepo.add(new Comment());
         //then
-        verify(confRepo, times(1)).add(new Comment());
+        verify(mockedConfRepo, times(1)).add(new Comment());
     }
 
     @Test
@@ -57,15 +60,13 @@ class ConferencesRepositoryTest {
         Conference conf = new Conference(UUID.randomUUID().toString(), "DevConf", listOfPresentation);
         cenferencesList.add(conf);
         //when
-        Mockito.when(confRepo.getConferences()).thenReturn(cenferencesList);
+        Mockito.when(mockedConfRepo.getConferences()).thenReturn(cenferencesList);
         //then
-        assertThat(confRepo.getConferences()).contains(conf);
+        assertThat(mockedConfRepo.getConferences()).contains(conf);
     }
 
     @Test
     void shouldReturnListOfYears() {
-        //given
-        ConferencesRepository confRepo = new ConferencesRepository("xyz");
         //when
         java.util.List<YearDto> list = confRepo.getYears();
         java.util.List<String> listOfYears = list.stream()
@@ -78,7 +79,6 @@ class ConferencesRepositoryTest {
     @Test
     void shouldReturnConference() {
         //given
-        ConferencesRepository confRepo = new ConferencesRepository("xyz");
         confRepo.importAllConferences();
         //when
         ConferenceDto actual = confRepo.getConference("21");
@@ -89,14 +89,11 @@ class ConferencesRepositoryTest {
     @Test
     void shouldImportConference() {
         //given
-        ConferencesRepository confRepo = new ConferencesRepository("xyz");
-        confRepo.importAllConferences();
-        //when
         ConferenceImportDto conf = new ConferenceImportDto();
         conf.setName("Caffeerence");
         conf.setYear("2018");
         conf.setPlaylistLink("link");
-
+        //when
         String id = confRepo.importConference(conf);
         ConferenceDto actual = confRepo.getConference(id);
         //then
