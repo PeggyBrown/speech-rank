@@ -17,8 +17,8 @@ public class Presentation {
     private String title;
     private String link;
     private Double rating;
-    private List<Rate> rates;
-    private List<Comment> comments;
+    private List<Rate> rates = List.empty();
+    private List<Comment> comments = List.empty();
 
     public Presentation(Importer.VideoData videoData) {
         id = UUID.randomUUID().toString();
@@ -35,7 +35,7 @@ public class Presentation {
         rating = rates.toJavaStream()
                 .mapToInt(Rate::getRate)
                 .average()
-                .orElse(rating);
+                .orElse(new Double(0));
         return rating;
     }
 
