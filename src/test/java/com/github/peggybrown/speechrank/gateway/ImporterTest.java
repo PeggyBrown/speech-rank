@@ -55,9 +55,6 @@ class ImporterTest {
         YouTube.PlaylistItems playlistItems = mock(YouTube.PlaylistItems.class);
         Importer importer = new Importer(apiKey, youTube);
 
-//        when(youTube.playlistItems().list(anyString())).thenThrow(new GoogleJsonResponseException(
-//            new HttpResponseException.Builder(500, "", new HttpHeaders()),
-//            new GoogleJsonError()));
         when(youTube.playlistItems()).thenReturn(playlistItems);
             when(playlistItems.list(anyString())).thenThrow(new IOException("message"));
         List<Importer.VideoData> videos = importer.importFromYouTubePlaylist(PLAYLIST_ID);
